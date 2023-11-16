@@ -1,0 +1,220 @@
+<!DOCTYPE html>
+<html lang="en" xmlns:th="http:/www.thymeleaf.org">
+
+<head>
+	<meta charset="utf-8">
+	<title>MultiShop - Online Shop Website Template</title>
+	<meta content="width=device-width, initial-scale=1.0" name="viewport">
+	<meta content="Free HTML Templates" name="keywords">
+	<meta content="Free HTML Templates" name="description">
+	
+	<!-- Favicon -->
+	<link href="img/favicon.ico" rel="icon">
+	
+	<!-- Google Web Fonts -->
+	<link rel="preconnect" href="https://fonts.gstatic.com">
+	<link href="https://fonts.googleapis.com/css2?family=Roboto:wght@400;500;700&display=swap" rel="stylesheet">
+	
+	<!-- Font Awesome -->
+	<link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/5.10.0/css/all.min.css" rel="stylesheet">
+	
+	<!-- Libraries Stylesheet -->
+	<link href="lib/animate/animate.min.css" rel="stylesheet">
+	<link href="lib/owlcarousel/assets/owl.carousel.min.css" rel="stylesheet">
+	
+	<!-- Customized Bootstrap Stylesheet -->
+	<link href="/css/style.css" rel="stylesheet">
+</head>
+
+<body>
+
+<div class="container">
+	<!--Topbar-->
+	<div th:insert="~{shop/templates/shop_template.html::topbar}"></div>
+	<!--Navbar-->
+	<div th:insert="~{shop/templates/shop_template.html::navbar}"></div>
+	
+	<!-- Breadcrumb Start -->
+	<div class="container-fluid">
+		<div class="row px-xl-5">
+			<div class="col-12">
+				<nav class="breadcrumb bg-light mb-30">
+					<a class="breadcrumb-item text-dark" th:href="@{/home}">Home</a>
+					<a class="breadcrumb-item text-dark" href="">Shop</a>
+					<span class="breadcrumb-item active">Shop List</span>
+				</nav>
+			</div>
+		</div>
+	</div>
+	<!-- Breadcrumb End -->
+	
+	<!-- Shop Start -->
+	<div class="container-fluid">
+		<div class="row px-xl-5">
+			<!-- Shop Sidebar Start -->
+			<div class="col-lg-3 col-md-4">
+				<!-- Price Start -->
+				<h5 class="section-title position-relative text-uppercase mb-3">
+					<span class="bg-secondary pr-3">Filter by price</span>
+				</h5>
+				<div class="bg-light p-4 mb-30">
+					<form>
+						<div class="custom-control custom-checkbox d-flex align-items-center justify-content-between mb-3">
+							<a id="price-all" th:href="@{/home/shop (categoryId=${categoryId})}">All price</a>
+						</div>
+						<div class="custom-control custom-checkbox d-flex align-items-center justify-content-between mb-3">
+							<a id="price-1"
+							   th:href="@{/home/shop (minPrice=${0}, maxPrice=${200}, categoryId=${categoryId})}">
+								€0 - €200</a>
+						</div>
+						<div class="custom-control custom-checkbox d-flex align-items-center justify-content-between mb-3">
+							<a id="price-2"
+							   th:href="@{/home/shop (minPrice=${200}, maxPrice=${400}, categoryId=${categoryId})}">
+								€200 - €400</a>
+						</div>
+						<div class="custom-control custom-checkbox d-flex align-items-center justify-content-between mb-3">
+							<a id="price-3"
+							   th:href="@{/home/shop (minPrice=${400}, maxPrice=${600}, categoryId=${categoryId})}">
+								€400 - €600</a>
+						</div>
+						<div class="custom-control custom-checkbox d-flex align-items-center justify-content-between mb-3">
+							<a id="price-4"
+							   th:href="@{/home/shop (minPrice=${600}, maxPrice=${800}, categoryId=${categoryId})}">
+								€600 - €800</a>
+						</div>
+						<div class="custom-control custom-checkbox d-flex align-items-center justify-content-between">
+							<a id="price-5"
+							   th:href="@{/home/shop (minPrice=${800}, maxPrice=${1000}, categoryId=${categoryId})}">
+								€800 - €1000</a>
+						</div>
+					</form>
+					<br>
+					<form action="/home/shop" method="get">
+						<label for="minPrice">Min Price:</label>
+						<input type="number" id="minPrice" name="minPrice" value="0" min="0">
+						
+						<label for="maxPrice">Max Price:</label>
+						<input type="number" id="maxPrice" name="maxPrice" value="0" min="0">
+						
+						<button class="btn btn-primary" type="submit">Filter</button>
+					</form>
+				</div>
+				<!-- Price End -->
+				<!-- Category Start -->
+				<h5 class="section-title position-relative text-uppercase mb-3">
+					<span class="bg-secondary pr-3">Categories</span>
+				</h5>
+				<div class="bg-light p-4 mb-30">
+					<a class="custom-control custom-checkbox d-flex align-items-center justify-content-between"
+					   th:href="@{/home/shop}">All</a>
+					<form th:each="category:${categoryList}">
+						<div class="custom-control custom-checkbox d-flex align-items-center justify-content-between">
+							<a id="category"
+							   th:href="@{/home/shop?(categoryId = ${category.id})}"
+							   th:text="${category.name}"></a>
+						</div>
+					</form>
+				</div>
+			</div>
+			
+			<!-- Shop Product Start -->
+			<div class="col-lg-9 col-md-8">
+				<div class="row pb-3">
+					
+					<div class="col-lg-4 col-md-6 col-sm-6 pb-1" th:each="product:${products}">
+						<div class="product-item bg-light mb-4">
+							<div class="product-img position-relative overflow-hidden">
+								<img class="img-fluid w-100" th:src="@{/images/{img} (img = ${product.image1})}" alt="">
+							</div>
+							<div class="text-center py-4">
+								<a class="h6 text-decoration-none text-truncate" th:text="${product.name}"
+								   th:href="@{/home/product/{id} (id = ${product.id})}"></a>
+								<div class="d-flex align-items-center justify-content-center mt-2">
+									
+									<h5 th:if="${product.offer == 'Yes'}"
+									    th:text="${product.price_discount}  + '€'"></h5>
+									
+									<h5 th:if="${product.offer == 'No'}"
+									    th:text="${product.price}  + '€'"></h5>
+									
+									<h6 class="text-muted ml-2" th:if="${product.offer == 'Yes'}">
+										<del th:text="${product.price} + '€'"></del>
+									</h6>
+								</div>
+							</div>
+						</div>
+					</div>
+					
+					
+					<div class="col-12" th:if="${productsNumber > 0}">
+						<nav>
+							<ul class="pagination justify-content-center">
+								<div th:if="${currentPage > 0}">
+									<li class="page-item">
+										<a class="page-link"
+										   th:href="@{/home/shop(page=${currentPage - 1}, categoryId=${categoryId})}"
+										   aria-label="Previous">
+											<span aria-hidden="true">&laquo;</span>
+										</a>
+									</li>
+								</div>
+								<div th:if="${currentPage == 0}">
+									<li class="page-item disabled">
+										<a class="page-link" href="" aria-label="Previous">
+											<span aria-hidden="true">&laquo;</span>
+										</a>
+									</li>
+								</div>
+								<th:block th:each="pageNumber: ${#numbers.sequence(0, totalPages -1)}"
+								          th:if="${pageNumber >= currentPage - 2 and pageNumber <= currentPage +2}">
+									<li th:class="${pageNumber == currentPage} ? 'page-item active' : 'page-item'">
+										<a class="page-link"
+										   th:href="@{/home/shop(page=${pageNumber}, categoryId=${categoryId})}"
+										   th:text="${pageNumber + 1}"></a>
+									</li>
+								</th:block>
+								<div th:if="${currentPage < totalPages -1}">
+									<li class="page-item">
+										<a class="page-link"
+										   th:href="@{/home/shop(page=${currentPage + 1}, categoryId=${categoryId})}"
+										   aria-label="Next">
+											<span aria-hidden="true">&raquo;</span>
+										</a>
+									</li>
+								</div>
+							</ul>
+						</nav>
+					</div>
+				
+				</div>
+			</div>
+			<!-- Shop Product End -->
+		
+		
+		</div>
+	</div>
+
+</div>
+<!--footer-->
+<div th:insert="~{shop/templates/shop_template.html::footer}"></div>
+
+
+<!-- Back to Top -->
+<a href="#" class="btn btn-primary back-to-top"><i class="fa fa-angle-double-up"></i></a>
+
+
+<!-- JavaScript Libraries -->
+<script src="https://code.jquery.com/jquery-3.4.1.min.js"></script>
+<script src="https://stackpath.bootstrapcdn.com/bootstrap/4.4.1/js/bootstrap.bundle.min.js"></script>
+<script src="lib/easing/easing.min.js"></script>
+<script src="lib/owlcarousel/owl.carousel.min.js"></script>
+
+<!-- Contact Javascript File -->
+<script src="mail/jqBootstrapValidation.min.js"></script>
+<script src="mail/contact.js"></script>
+
+<!-- Template Javascript -->
+<script src="js/main.js"></script>
+</body>
+
+</html>

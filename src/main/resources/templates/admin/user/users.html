@@ -1,0 +1,160 @@
+<!DOCTYPE html>
+<html lang="es" xmlns:th="http:/www.thymeleaf.org">
+
+<head>
+	
+	<meta charset="utf-8">
+	<meta http-equiv="X-UA-Compatible" content="IE=edge">
+	<meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no">
+	<meta name="description" content="">
+	<meta name="author" content="">
+	
+	<title>SB Admin 2 - Dashboard</title>
+	
+	<!-- Custom fonts for this template-->
+	<link th:href="@{/vendor/fontawesome-free/css/all.min.css}" rel="stylesheet" type="text/css">
+	<link th:href="@{https://fonts.googleapis.com/css?family=Nunito:200,200i,300,300i,400,400i,600,600i,700,700i,800,800i,900,900i}"
+	      rel="stylesheet">
+	<!-- Custom styles for this template-->
+	<link th:href="@{/css/sb-admin-2.min.css}" rel="stylesheet">
+
+</head>
+
+<body id="page-top">
+
+<div id="wrapper">
+	
+	<!--Sidebar-->
+	<div th:insert="~{admin/templates/admin_template.html::sidebar}"></div>
+	
+	<div id="content-wrapper" class="d-flex flex-column">
+		<div id="content">
+			<div th:insert="~{admin/templates/admin_template.html::topbar}"></div>
+			
+			<!-- Begin Page Content -->
+			<div class="container-fluid">
+				
+				<!-- Page Heading -->
+				<div class="d-sm-flex align-items-center justify-content-between mb-4">
+					<h1 class="h3 mb-0 text-gray-800">Dashboard</h1>
+				</div>
+				
+				<a type="button" class="btn btn-primary" th:href="@{user/create}">Create</a>
+				<br></br>
+				
+				
+				<!-- Content Row -->
+				<div class="row">
+					
+					<table class="table">
+						<thead>
+						<tr>
+							<th scope="col">Username</th>
+							<th scope="col">Name</th>
+							<th scope="col">Lastname</th>
+							<th scope="col">Phone</th>
+							<th scope="col">Email</th>
+							<th scope="col">Birthday</th>
+							<th scope="col">Type</th>
+							<th scope="col">Address</th>
+						</tr>
+						</thead>
+						<tbody>
+						<tr th:each="user:${users}">
+							<td th:text="${user.username}"></td>
+							<td th:text="${user.name}"></td>
+							<td th:text="${user.lastname}"></td>
+							<td th:text="${user.phone}"></td>
+							<td th:text="${user.email}"></td>
+							<td th:text="${#dates.format(user.birthday, 'dd/MM/yyyy')}"></td>
+							<td th:text="${user.type}"></td>
+							<td th:text="${user.address}"></td>
+							<td>
+								<div class="btn-group">
+									<button type="button" class="btn btn-primary"
+									        data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
+										Actions
+									</button>
+									<div class="dropdown-menu">
+										<a class="dropdown-item" th:href="@{user/edit/{id} (id = ${user.id})}">Edit</a>
+										<a class="dropdown-item"
+										   th:href="@{user/delete/{id} (id = ${user.id})}">Delete</a>
+									</div>
+								</div>
+							</td>
+						
+						</tr>
+						</tbody>
+						<div th:if="${usersNumber > 0}">
+							<nav aria-label="Page navigation">
+								<ul class="pagination">
+									<div th:if="${currentPage > 0}">
+										<li class="page-item">
+											<a class="page-link" th:href="@{/user(page=${currentPage - 1})}"
+											   aria-label="Previous">
+												<span aria-hidden="true">&laquo;</span>
+											</a>
+										</li>
+									</div>
+									<div th:if="${currentPage == 0}">
+										<li class="page-item">
+											<a class="page-link" href="" aria-label="Previous">
+												<span aria-hidden="true">&laquo;</span>
+											</a>
+										</li>
+									</div>
+									<th:block th:each="pageNumber : ${#numbers.sequence(0, totalPages - 1)}"
+									          th:if="${pageNumber >= currentPage - 2 and pageNumber <= currentPage + 2}">
+										<li th:class="${pageNumber == currentPage} ? 'page-item active' : 'page-item'">
+											<a class="page-link" th:href="@{/user(page=${pageNumber})}"
+											   th:text="${pageNumber + 1}"></a>
+										</li>
+									</th:block>
+									<div th:if="${currentPage < totalPages -1}">
+										<li class="page-item">
+											<a class="page-link" th:href="@{/user(page=${currentPage + 1})}"
+											   aria-label="Next">
+												<span aria-hidden="true">&raquo;</span>
+											</a>
+										</li>
+									</div>
+								</ul>
+							</nav>
+						</div>
+					
+					</table>
+				
+				
+				</div>
+			
+			</div>
+			
+			<!--Footer-->
+			<div th:insert="~{admin/templates/admin_template.html::footer}"></div>
+		
+		</div>
+	</div>
+
+
+</div>
+
+
+<!-- Bootstrap core JavaScript-->
+<script th:src="@{/vendor/jquery/jquery.min.js}"></script>
+<script th:src="@{/vendor/bootstrap/js/bootstrap.bundle.min.js}"></script>
+
+<!-- Core plugin JavaScript-->
+<script th:src="@{/vendor/jquery-easing/jquery.easing.min.js}"></script>
+
+<!-- Custom scripts for all pages-->
+<script th:src="@{/js/sb-admin-2.min.js}"></script>
+
+<!-- Page level plugins -->
+<script th:src="@{/vendor/chart.js/Chart.min.js}"></script>
+
+<!-- Page level custom scripts -->
+<script th:src="@{/js/demo/chart-area-demo.js}"></script>
+<script th:src="@{/js/demo/chart-pie-demo.js}"></script>
+
+</body>
+</html>
