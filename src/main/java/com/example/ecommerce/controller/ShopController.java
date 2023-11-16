@@ -4,6 +4,7 @@ import com.example.ecommerce.model.Category;
 import com.example.ecommerce.model.Product;
 import com.example.ecommerce.service.ICategoryService;
 import com.example.ecommerce.service.IProductService;
+import com.example.ecommerce.service.MailSenderService;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.data.domain.Page;
@@ -28,9 +29,14 @@ public class ShopController {
     private final IProductService productService;
     private final ICategoryService categoryService;
 
-    public ShopController(IProductService productService, ICategoryService categoryService) {
+    private final MailSenderService mailSenderService;
+
+    public ShopController(IProductService productService,
+                          ICategoryService categoryService,
+                          MailSenderService mailSenderService) {
         this.productService = productService;
         this.categoryService = categoryService;
+        this.mailSenderService = mailSenderService;
     }
 
     @GetMapping("")
@@ -113,5 +119,25 @@ public class ShopController {
 
         return "shop/product";
     }
+
+    //Mail Part
+    @GetMapping("/contact")
+    public String contact(){
+        return "shop/contact";
+    }
+
+    @GetMapping("/send")
+    public String send(@RequestParam(name = "name") String name,
+                       @RequestParam(name = "from") String from,
+                       @RequestParam(name = "subject")String subject,
+                       @RequestParam(name = "text")String text){
+
+        String to = "pruebaspring16@gmail.com";
+        String content = "Name: " + name + "\n" + "Email: " + from + "\n" + "\n" + text;
+        mailSenderService.sendEmail(to, subject, content);
+
+        return "redirect:/home";
+    }
+    //Final Mail Part
 
 }
