@@ -26,9 +26,11 @@ import java.util.Optional;
 public class ShopController {
 
     private final Logger log = LoggerFactory.getLogger(ShopController.class);
-
+    int detailsNumber;
     List<Detail> details = new ArrayList<Detail>();
+
     Order order = new Order();
+
 
     private final IProductService productService;
     private final ICategoryService categoryService;
@@ -70,8 +72,8 @@ public class ShopController {
         List<Product> recentProducts = productList.subList(0, Math.min(productsToShow, productList.size()));
         model.addAttribute("recentProducts", recentProducts);
 
-        //Cart size
-        int detailsNumber = details.size();
+        //Cart
+        detailsNumber = details.size();
         model.addAttribute("detailsNumber", detailsNumber);
 
         return "shop/index.html";
@@ -100,6 +102,8 @@ public class ShopController {
 
         List<Category> categoryList = categoryService.findAll();
 
+        detailsNumber = details.size();
+        model.addAttribute("detailsNumber", detailsNumber);
         model.addAttribute("categoryList", categoryList);
         model.addAttribute("categoryId", categoryId);
         model.addAttribute("products", products);
@@ -122,6 +126,8 @@ public class ShopController {
         int productsToShow = 8;
         List<Product> productsToShowList = productList.subList(0, Math.min(productsToShow, productList.size()));
 
+        detailsNumber = details.size();
+        model.addAttribute("detailsNumber", detailsNumber);
         model.addAttribute("productsToShow", productsToShowList);
         model.addAttribute("product", product);
 
@@ -130,7 +136,9 @@ public class ShopController {
 
     //Mail Part
     @GetMapping("/contact")
-    public String contact() {
+    public String contact(Model model) {
+        detailsNumber = details.size();
+        model.addAttribute("detailsNumber", detailsNumber);
         return "shop/contact";
     }
 
@@ -149,7 +157,7 @@ public class ShopController {
     //Final Mail Part
 
 
-    //Cart part
+    //Cart
     @PostMapping("/cart")
     public String cart(@RequestParam(name = "id") Integer id,
                        @RequestParam(name = "quantity") Integer quantity,
@@ -185,12 +193,11 @@ public class ShopController {
         total = details.stream().mapToDouble(dt -> dt.getTotal()).sum();
         order.setTotal(total);
 
+        detailsNumber = details.size();
+        model.addAttribute("detailsNumber", detailsNumber);
         model.addAttribute("order", order);
         model.addAttribute("details", details);
         model.addAttribute("detail", detail);
-
-        log.info("detail: {}", detail.getName());
-        log.info("cart: {}", details.size());
 
         return "shop/cart.html";
     }
@@ -211,6 +218,9 @@ public class ShopController {
         total = details.stream().mapToDouble(dt -> dt.getTotal()).sum();
         order.setTotal(total);
 
+        detailsNumber = details.size();
+        model.addAttribute("detailsNumber", detailsNumber);
+
         model.addAttribute("order", order);
         model.addAttribute("details", details);
         return "shop/cart.html";
@@ -218,10 +228,13 @@ public class ShopController {
 
     @GetMapping("/getCart")
     public String getCart(Model model){
+        detailsNumber = details.size();
+        model.addAttribute("detailsNumber", detailsNumber);
+
         model.addAttribute("details", details);
         model.addAttribute("order", order);
         return "shop/cart";
     }
-    //Final cart part
+    //Final cart
 
 }
