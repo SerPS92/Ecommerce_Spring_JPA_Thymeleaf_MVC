@@ -1,10 +1,13 @@
 package com.example.ecommerce.controller;
 
 import com.example.ecommerce.model.Category;
+import com.example.ecommerce.model.Detail;
+import com.example.ecommerce.model.Order;
 import com.example.ecommerce.model.Product;
 import com.example.ecommerce.service.ICategoryService;
 import com.example.ecommerce.service.IProductService;
 import com.example.ecommerce.service.MailSenderService;
+import jakarta.servlet.http.HttpSession;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.data.domain.Page;
@@ -12,11 +15,9 @@ import org.springframework.data.domain.PageRequest;
 import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
-import org.springframework.web.bind.annotation.GetMapping;
-import org.springframework.web.bind.annotation.PathVariable;
-import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.RequestParam;
+import org.springframework.web.bind.annotation.*;
 
+import java.util.ArrayList;
 import java.util.List;
 import java.util.Optional;
 
@@ -25,6 +26,9 @@ import java.util.Optional;
 public class ShopController {
 
     private final Logger log = LoggerFactory.getLogger(ShopController.class);
+
+    List<Detail> details = new ArrayList<Detail>();
+    Order order = new Order();
 
     private final IProductService productService;
     private final ICategoryService categoryService;
@@ -66,6 +70,10 @@ public class ShopController {
         List<Product> recentProducts = productList.subList(0, Math.min(productsToShow, productList.size()));
         model.addAttribute("recentProducts", recentProducts);
 
+        //Cart size
+        int detailsNumber = details.size();
+        model.addAttribute("detailsNumber", detailsNumber);
+
         return "shop/index.html";
     }
 
@@ -82,9 +90,9 @@ public class ShopController {
         Page<Product> products;
         if (categoryId == null && (minPrice == null && maxPrice == null)) {
             products = productService.getProducts(pageable);
-        } else if(categoryId != null && (minPrice == null && maxPrice == null)){
+        } else if (categoryId != null && (minPrice == null && maxPrice == null)) {
             products = productService.getProductsByCategory(categoryId, pageable);
-        } else if(categoryId == null &&(minPrice != null || maxPrice != null)){
+        } else if (categoryId == null && (minPrice != null || maxPrice != null)) {
             products = productService.getProductsByPrice(minPrice, maxPrice, pageable);
         } else {
             products = productService.getProductsByCategoryAndPrice(minPrice, maxPrice, categoryId, pageable);
@@ -103,7 +111,7 @@ public class ShopController {
     }
 
     @GetMapping("/product/{id}")
-    public String product(@PathVariable(name = "id") int id, Model model){
+    public String product(@PathVariable(name = "id") int id, Model model) {
 
         Product product = new Product();
         Optional<Product> optionalProduct = productService.findById(id);
@@ -122,15 +130,15 @@ public class ShopController {
 
     //Mail Part
     @GetMapping("/contact")
-    public String contact(){
+    public String contact() {
         return "shop/contact";
     }
 
     @GetMapping("/send")
     public String send(@RequestParam(name = "name") String name,
                        @RequestParam(name = "from") String from,
-                       @RequestParam(name = "subject")String subject,
-                       @RequestParam(name = "text")String text){
+                       @RequestParam(name = "subject") String subject,
+                       @RequestParam(name = "text") String text) {
 
         String to = "pruebaspring16@gmail.com";
         String content = "Name: " + name + "\n" + "Email: " + from + "\n" + "\n" + text;
@@ -139,5 +147,81 @@ public class ShopController {
         return "redirect:/home";
     }
     //Final Mail Part
+
+
+    //Cart part
+    @PostMapping("/cart")
+    public String cart(@RequestParam(name = "id") Integer id,
+                       @RequestParam(name = "quantity") Integer quantity,
+                       Model model,
+                       HttpSession session) {
+
+        Detail detail = new Detail();
+        Product product = new Product();
+        double total = 0;
+
+        Optional<Product> optionalProduct = productService.findById(id);
+        String offer = optionalProduct.get().getOffer();
+
+        product = optionalProduct.get();
+
+        detail.setQuantity(quantity);
+        detail.setName(product.getName());
+        detail.setProduct(product);
+        if (offer.equalsIgnoreCase("No")) {
+            detail.setPrice(product.getPrice());
+            detail.setTotal(product.getPrice() * quantity);
+        } else {
+            detail.setPrice(product.getPrice_discount());
+            detail.setTotal(product.getPrice_discount() * quantity);
+        }
+
+        Integer idProduct = product.getId();
+        boolean added = details.stream().anyMatch(p -> p.getProduct().getId().equals(idProduct));
+        if (!added) {
+            details.add(detail);
+        }
+
+        total = details.stream().mapToDouble(dt -> dt.getTotal()).sum();
+        order.setTotal(total);
+
+        model.addAttribute("order", order);
+        model.addAttribute("details", details);
+        model.addAttribute("detail", detail);
+
+        log.info("detail: {}", detail.getName());
+        log.info("cart: {}", details.size());
+
+        return "shop/cart.html";
+    }
+
+    @GetMapping("/cart/delete/{id}")
+    public String deleteProductCart(@PathVariable(name = "id") Integer id,
+                                    Model model) {
+
+        List<Detail> newDetailList = new ArrayList<Detail>();
+        for (Detail detail : details) {
+            if (detail.getProduct().getId() != id) {
+                newDetailList.add(detail);
+            }
+        }
+        details = newDetailList;
+
+        double total = 0;
+        total = details.stream().mapToDouble(dt -> dt.getTotal()).sum();
+        order.setTotal(total);
+
+        model.addAttribute("order", order);
+        model.addAttribute("details", details);
+        return "shop/cart.html";
+    }
+
+    @GetMapping("/getCart")
+    public String getCart(Model model){
+        model.addAttribute("details", details);
+        model.addAttribute("order", order);
+        return "shop/cart";
+    }
+    //Final cart part
 
 }

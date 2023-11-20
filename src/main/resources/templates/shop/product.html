@@ -90,24 +90,18 @@
 						<del th:if="${product.offer == 'Yes'}"
 						     th:text="${product.price}  + '€'"></del>
 					</h6>
-					<div class="d-flex align-items-center mb-4 pt-2">
-						<div class="input-group quantity mr-3" style="width: 130px;">
-							<div class="input-group-btn">
-								<button class="btn btn-primary btn-minus">
-									<i class="fa fa-minus"></i>
-								</button>
+					<form th:action="@{/home/cart}" method="post">
+						<div class="d-flex align-items-center mb-4 pt-2">
+							<div class="input-group quantity mr-3" style="width: 130px;">
+								<input type="hidden" name="id" th:value="${product.id}">
+								<input type="text" class="form-control bg-secondary border-0 text-center"
+								       name="quantity" value="1">
 							</div>
-							<input type="text" class="form-control bg-secondary border-0 text-center" value="1">
-							<div class="input-group-btn">
-								<button class="btn btn-primary btn-plus">
-									<i class="fa fa-plus"></i>
-								</button>
-							</div>
+							<button class="btn btn-primary px-3"><i class="fa fa-shopping-cart mr-1"></i> Add To
+								Cart
+							</button>
 						</div>
-						<button class="btn btn-primary px-3"><i class="fa fa-shopping-cart mr-1"></i> Add To
-							Cart
-						</button>
-					</div>
+					</form>
 				</div>
 			</div>
 		</div>
