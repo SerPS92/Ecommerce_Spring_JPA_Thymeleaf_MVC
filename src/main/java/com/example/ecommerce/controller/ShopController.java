@@ -1,11 +1,9 @@
 package com.example.ecommerce.controller;
 
-import com.example.ecommerce.model.Category;
-import com.example.ecommerce.model.Detail;
-import com.example.ecommerce.model.Order;
-import com.example.ecommerce.model.Product;
+import com.example.ecommerce.model.*;
 import com.example.ecommerce.service.ICategoryService;
 import com.example.ecommerce.service.IProductService;
+import com.example.ecommerce.service.IUserService;
 import com.example.ecommerce.service.MailSenderService;
 import jakarta.servlet.http.HttpSession;
 import org.slf4j.Logger;
@@ -13,6 +11,7 @@ import org.slf4j.LoggerFactory;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageRequest;
 import org.springframework.data.domain.Pageable;
+import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.*;
@@ -28,20 +27,22 @@ public class ShopController {
     private final Logger log = LoggerFactory.getLogger(ShopController.class);
     int detailsNumber;
     List<Detail> details = new ArrayList<Detail>();
-
     Order order = new Order();
 
+    BCryptPasswordEncoder passwordEncoder = new BCryptPasswordEncoder();
 
     private final IProductService productService;
     private final ICategoryService categoryService;
-
+    private final IUserService userService;
     private final MailSenderService mailSenderService;
 
     public ShopController(IProductService productService,
                           ICategoryService categoryService,
+                          IUserService userService,
                           MailSenderService mailSenderService) {
         this.productService = productService;
         this.categoryService = categoryService;
+        this.userService = userService;
         this.mailSenderService = mailSenderService;
     }
 
@@ -77,6 +78,21 @@ public class ShopController {
         model.addAttribute("detailsNumber", detailsNumber);
 
         return "shop/index.html";
+    }
+
+    @GetMapping("/signUp")
+    public String signUp(){
+        return "shop/register.html";
+    }
+
+    @PostMapping("/register")
+    public String register(User user){
+
+        user.setPassword(passwordEncoder.encode(user.getPassword()));
+        user.setType("User");
+
+        userService.save(user);
+        return "redirect:/home";
     }
 
     @GetMapping("/shop")

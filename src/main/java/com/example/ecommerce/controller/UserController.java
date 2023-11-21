@@ -5,6 +5,7 @@ import com.example.ecommerce.service.IUserService;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.data.domain.Page;
+import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.*;
@@ -22,6 +23,8 @@ public class UserController {
     public UserController(IUserService userService) {
         this.userService = userService;
     }
+
+    BCryptPasswordEncoder passEncoder = new BCryptPasswordEncoder();
 
     @GetMapping("")
     public String list(@RequestParam(name = "page", defaultValue = "0") int page, Model model){
@@ -52,6 +55,7 @@ public class UserController {
     @PostMapping("/save")
     public String save(User user){
 
+        user.setPassword(passEncoder.encode(user.getPassword()));
         userService.save(user);
         return "redirect:/user";
     }
@@ -73,6 +77,7 @@ public class UserController {
     @PostMapping("/update")
     public String update(User user){
 
+        user.setPassword(passEncoder.encode(user.getPassword()));
         userService.update(user);
 
         return "redirect:/user";
