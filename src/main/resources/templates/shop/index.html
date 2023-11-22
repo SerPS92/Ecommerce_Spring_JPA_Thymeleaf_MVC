@@ -30,7 +30,11 @@
 
 <div class="container">
 	<!--Topbar-->
-	<div th:insert="~{shop/templates/shop_template.html::topbar}"></div>
+	<div th:insert="~{shop/templates/shop_template.html::topbar_user}"
+	     th:if="${session.idUser != null}"></div>
+	
+	<div th:insert="~{shop/templates/shop_template.html::topbar}"
+	     th:if="${session.idUser == null}"></div>
 	<!--Navbar-->
 	<div th:insert="~{shop/templates/shop_template.html::navbar}"></div>
 	
@@ -146,7 +150,8 @@
 					<div class="offer-text">
 						<h6 class="text-white text-uppercase" th:text="${offerProduct.name}"></h6>
 						<h3 class="text-white mb-3">Special Offer</h3>
-						<a th:href="@{/home/product/{id} (id = ${offerProduct.id})}" class="btn btn-primary">Shop Now</a>
+						<a th:href="@{/home/product/{id} (id = ${offerProduct.id})}" class="btn btn-primary">Shop
+							Now</a>
 					</div>
 				</div>
 			</div>

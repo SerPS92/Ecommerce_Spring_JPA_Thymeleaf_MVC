@@ -39,8 +39,8 @@
 	<div th:insert="~{shop/templates/shop_template.html::navbar}"></div>
 	
 	
-	<h2>Sign up</h2>
-	<form class="form-horizontal" th:action="@{/home/register}" method="post">
+	<h2>Login</h2>
+	<form class="form-horizontal" th:action="@{/home/login}" method="post">
 		<br></br>
 		
 		<div class="row">
@@ -51,7 +51,8 @@
 					       placeholder="Insert username" autocomplete="off" required>
 				</div>
 			</div>
-			
+		</div>
+		<div class="row">
 			<div class="col-md-6">
 				<label class="control-label col-sm-2" for="username">Password: </label>
 				<div class="col-sm-10">
@@ -60,62 +61,9 @@
 				</div>
 			</div>
 		</div>
-		
-		<div class="row">
-			<div class="col-md-6">
-				<label class="control-label col-sm-2" for="username">Name: </label>
-				<div class="col-sm-10">
-					<input type="text" class="form-control" id="name" name="name"
-					       placeholder="Insert name" autocomplete="off" required>
-				</div>
-			</div>
-			
-			<div class="col-md-6">
-				<label class="control-label col-sm-2" for="username">Lastname: </label>
-				<div class="col-sm-10">
-					<input type="text" class="form-control" id="lastname" name="lastname"
-					       placeholder="Insert lastname" autocomplete="off" required>
-				</div>
-			</div>
-		</div>
-		
-		<div class="row">
-			<div class="col-md-6">
-				<label class="control-label col-sm-2" for="username">Phone: </label>
-				<div class="col-sm-10">
-					<input type="text" class="form-control" id="phone" name="phone"
-					       placeholder="Insert phone number" autocomplete="off" required>
-				</div>
-			</div>
-			
-			<div class="col-md-6">
-				<label class="control-label col-sm-2" for="username">Email: </label>
-				<div class="col-sm-10">
-					<input type="email" class="form-control" id="email" name="email"
-					       placeholder="Insert email" autocomplete="off" required>
-				</div>
-			</div>
-		</div>
-		
-		<div class="form-group">
-			<label class="control-label col-sm-2" for="username">Birthday: </label>
-			<div class="col-sm-5">
-				<input type="date" class="form-control" id="birthday" name="birthday"
-				       placeholder="dd/mm/yyyy" autocomplete="off" required>
-			</div>
-		</div>
-		
-		<div class="form-group">
-			<label class="control-label col-sm-2" for="address">Address: </label>
-			<div class="col-sm-10">
-								<textarea id="address" name="address" rows="4" cols="50"
-								          placeholder="Insert address">
-								</textarea>
-			</div>
-		</div>
-		
+		<br>
 		<div class="col-sm-2">
-			<button type="submit" class="btn btn-primary">Save</button>
+			<button type="submit" class="btn btn-primary">Login</button>
 		</div>
 	
 	

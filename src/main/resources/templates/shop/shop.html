@@ -30,7 +30,11 @@
 
 <div class="container">
 	<!--Topbar-->
-	<div th:insert="~{shop/templates/shop_template.html::topbar}"></div>
+	<div th:insert="~{shop/templates/shop_template.html::topbar_user}"
+	     th:if="${session.idUser != null}"></div>
+	
+	<div th:insert="~{shop/templates/shop_template.html::topbar}"
+	     th:if="${session.idUser == null}"></div>
 	<!--Navbar-->
 	<div th:insert="~{shop/templates/shop_template.html::navbar}"></div>
 	

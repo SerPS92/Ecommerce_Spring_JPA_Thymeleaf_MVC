@@ -11,6 +11,9 @@ import org.slf4j.LoggerFactory;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageRequest;
 import org.springframework.data.domain.Pageable;
+import org.springframework.security.core.Authentication;
+import org.springframework.security.core.context.SecurityContextHolder;
+import org.springframework.security.core.userdetails.UserDetails;
 import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
@@ -28,7 +31,6 @@ public class ShopController {
     int detailsNumber;
     List<Detail> details = new ArrayList<Detail>();
     Order order = new Order();
-
     BCryptPasswordEncoder passwordEncoder = new BCryptPasswordEncoder();
 
     private final IProductService productService;
@@ -47,7 +49,9 @@ public class ShopController {
     }
 
     @GetMapping("")
-    public String home(Model model) {
+    public String home(Model model, HttpSession session) {
+
+        log.info("Sesion: {}", session.getAttribute("idUser"));
 
         //Categories
         List<Category> categoryList = categoryService.findAll();
@@ -80,13 +84,14 @@ public class ShopController {
         return "shop/index.html";
     }
 
+    //Sign up
     @GetMapping("/signUp")
-    public String signUp(){
+    public String signUp() {
         return "shop/register.html";
     }
 
     @PostMapping("/register")
-    public String register(User user){
+    public String register(User user) {
 
         user.setPassword(passwordEncoder.encode(user.getPassword()));
         user.setType("User");
@@ -94,7 +99,24 @@ public class ShopController {
         userService.save(user);
         return "redirect:/home";
     }
+    //Final sign up
 
+    //Login
+    @GetMapping("/login")
+    public String login() {
+        return "shop/login";
+    }
+    @GetMapping("/logout")
+    public String logout(HttpSession session) {
+        log.info("logout:");
+        session.removeAttribute("idUser");
+        session.removeAttribute("name");
+        session.removeAttribute("type");
+        return "redirect:/home";
+    }
+    //Final login
+
+    //Shop
     @GetMapping("/shop")
     public String shop(@RequestParam(name = "page", defaultValue = "0") int page,
                        @RequestParam(name = "pageSize", defaultValue = "9") int pageSize,
@@ -149,8 +171,9 @@ public class ShopController {
 
         return "shop/product";
     }
+    //Final shop
 
-    //Mail Part
+    //Mail contact
     @GetMapping("/contact")
     public String contact(Model model) {
         detailsNumber = details.size();
@@ -170,7 +193,7 @@ public class ShopController {
 
         return "redirect:/home";
     }
-    //Final Mail Part
+    //Final Mail contact
 
 
     //Cart
@@ -243,7 +266,7 @@ public class ShopController {
     }
 
     @GetMapping("/getCart")
-    public String getCart(Model model){
+    public String getCart(Model model) {
         detailsNumber = details.size();
         model.addAttribute("detailsNumber", detailsNumber);
 
