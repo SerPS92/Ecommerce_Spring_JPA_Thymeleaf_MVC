@@ -7,8 +7,11 @@ import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageRequest;
 import org.springframework.stereotype.Service;
 
+import java.text.SimpleDateFormat;
+import java.util.Date;
 import java.util.List;
 import java.util.Optional;
+import java.util.Random;
 
 @Service
 public class OrderServiceImpl implements IOrderService {
@@ -43,5 +46,17 @@ public class OrderServiceImpl implements IOrderService {
     public Page<Order> getOrders(int page, int size) {
         PageRequest pageRequest = PageRequest.of(page, size);
         return orderRepo.findAll(pageRequest);
+    }
+
+    @Override
+    public String getOrderNumber() {
+        Date date = new Date();
+        SimpleDateFormat dateFormat = new SimpleDateFormat("yyyyMMdd");
+        String formattedDate = dateFormat.format(date);
+
+        Random random = new Random();
+        int randomNumber = random.nextInt(10000);
+
+        return formattedDate + randomNumber;
     }
 }

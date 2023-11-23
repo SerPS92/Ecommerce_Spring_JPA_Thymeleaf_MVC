@@ -1,10 +1,7 @@
 package com.example.ecommerce.controller;
 
 import com.example.ecommerce.model.*;
-import com.example.ecommerce.service.ICategoryService;
-import com.example.ecommerce.service.IProductService;
-import com.example.ecommerce.service.IUserService;
-import com.example.ecommerce.service.MailSenderService;
+import com.example.ecommerce.service.*;
 import jakarta.servlet.http.HttpSession;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -20,6 +17,7 @@ import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.*;
 
 import java.util.ArrayList;
+import java.util.Date;
 import java.util.List;
 import java.util.Optional;
 
@@ -37,14 +35,20 @@ public class ShopController {
     private final ICategoryService categoryService;
     private final IUserService userService;
     private final MailSenderService mailSenderService;
+    private final IOrderService orderService;
+    private final IDetailsService detailsService;
 
     public ShopController(IProductService productService,
                           ICategoryService categoryService,
                           IUserService userService,
+                          IOrderService orderService,
+                          IDetailsService detailsService,
                           MailSenderService mailSenderService) {
         this.productService = productService;
         this.categoryService = categoryService;
         this.userService = userService;
+        this.orderService = orderService;
+        this.detailsService = detailsService;
         this.mailSenderService = mailSenderService;
     }
 
@@ -106,15 +110,53 @@ public class ShopController {
     public String login() {
         return "shop/login";
     }
-    @GetMapping("/logout")
-    public String logout(HttpSession session) {
+
+    @PostMapping("/auth")
+    public String auth(HttpSession session) {
+        int id = (int) session.getAttribute("idUser");
+        Optional<User> optionalUser = userService.findById(id);
+        if (optionalUser.isPresent()) {
+            log.info("Auth:");
+            User user = optionalUser.get();
+            session.setAttribute("name", user.getName());
+            session.setAttribute("type", user.getType());
+            log.info("idUser: {}", user.getId());
+            log.info("Name: {}", user.getName());
+            log.info("Type: {}", user.getType());
+        }
+
+        if(session.getAttribute("type").equals("Admin")){
+            return "redirect:/admin";
+        } else {
+            return  "redirect:/home";
+        }
+    }
+
+    @GetMapping("/logout/close")
+    public String logout(HttpSession session, Model model) {
         log.info("logout:");
+        details.clear();
+        detailsNumber = 0;
+        model.addAttribute("detailsNumber", detailsNumber);
         session.removeAttribute("idUser");
         session.removeAttribute("name");
         session.removeAttribute("type");
         return "redirect:/home";
     }
     //Final login
+
+    //Profile
+    @GetMapping("/profile")
+    public String profile(Model model, HttpSession session) {
+        int id = (int) session.getAttribute("idUser");
+        Optional<User> optionalUser = userService.findById(id);
+        if (optionalUser.isPresent()) {
+            User user = optionalUser.get();
+            model.addAttribute("user", user);
+        }
+        return "shop/profile.html";
+    }
+
 
     //Shop
     @GetMapping("/shop")
@@ -275,5 +317,55 @@ public class ShopController {
         return "shop/cart";
     }
     //Final cart
+
+    //Orders
+    @GetMapping("/saveOrder")
+    public String saveOrder(Model model, HttpSession session) {
+
+        Date date = new Date();
+        order.setDate(date);
+        order.setNumber(orderService.getOrderNumber());
+        order.setState("Paid");
+
+        int id = (int) session.getAttribute("idUser");
+        Optional<User> optionalUser = userService.findById(id);
+        if (optionalUser.isPresent()) {
+            User user = optionalUser.get();
+            order.setUser(user);
+            orderService.save(order);
+        }
+
+        for (Detail detail : details) {
+            detail.setOrder(order);
+            int sells = detail.getProduct().getSells();
+            int quantity = detail.getQuantity();
+            detail.getProduct().setSells(sells + quantity);
+            detailsService.save(detail);
+        }
+
+        details.clear();
+        order = new Order();
+
+
+        return "shop/thanks";
+    }
+
+    @GetMapping("/checkout")
+    public String checkout(Model model, HttpSession session) {
+        int id = (int) session.getAttribute("idUser");
+        Optional<User> optionalUser = userService.findById(id);
+        if (optionalUser.isPresent()) {
+            User user = optionalUser.get();
+            model.addAttribute("user", user);
+        }
+
+        detailsNumber = details.size();
+        model.addAttribute("detailsNumber", detailsNumber);
+
+        model.addAttribute("details", details);
+        model.addAttribute("order", order);
+
+        return "shop/checkout";
+    }
 
 }

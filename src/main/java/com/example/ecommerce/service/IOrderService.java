@@ -13,4 +13,5 @@ public interface IOrderService {
     Order save(Order order);
     List<Order> findByUser(User user);
     Page<Order> getOrders(int page, int size);
+    String getOrderNumber();
 }

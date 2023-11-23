@@ -59,17 +59,12 @@ public class SecurityConfig {
 
                 ).formLogin(form -> form
                         .loginPage("/home/login")
-                        .successHandler((request, response, authentication) -> {
-                            Set<String> roles = AuthorityUtils.authorityListToSet(authentication.getAuthorities());
-                            if(roles.contains("ROLE_Admin")){
-                                response.sendRedirect("/admin");
-                            } else{
-                                response.sendRedirect("/home");
-                            }
-                        })
+                        .successForwardUrl("/home/auth")
                         .permitAll()
                 ).logout(logout -> logout
-                        .logoutRequestMatcher(new AntPathRequestMatcher("/home/logout")).permitAll()
+                        .logoutRequestMatcher(new AntPathRequestMatcher("/home/logout"))
+                        .logoutSuccessUrl("/home/logout/close")
+                        .permitAll()
                 );
 
         return http.build();

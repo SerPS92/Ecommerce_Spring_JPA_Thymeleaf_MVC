@@ -31,11 +31,6 @@ public class CustomUserDetailsService implements UserDetailsService {
             log.info("loadUserByUsername!");
             User user = optionalUser.get();
             session.setAttribute("idUser", user.getId());
-            session.setAttribute("name", user.getName());
-            session.setAttribute("type", user.getType());
-            log.info("idUser: {}", user.getId());
-            log.info("Name: {}", user.getName());
-            log.info("Type: {}", user.getType());
             return org.springframework.security.core.userdetails.User.
                     builder()
                     .username(user.getUsername())

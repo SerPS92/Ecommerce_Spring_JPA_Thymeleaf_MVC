@@ -1,0 +1,79 @@
+<!DOCTYPE html>
+<html lang="en" xmlns:th="http://www.w3.org/1999/xhtml">
+
+<head>
+	<meta charset="utf-8">
+	<title>MultiShop - Online Shop Website Template</title>
+	<meta content="width=device-width, initial-scale=1.0" name="viewport">
+	<meta content="Free HTML Templates" name="keywords">
+	<meta content="Free HTML Templates" name="description">
+	
+	<!-- Favicon -->
+	<link href="img/favicon.ico" rel="icon">
+	
+	<!-- Google Web Fonts -->
+	<link rel="preconnect" href="https://fonts.gstatic.com">
+	<link href="https://fonts.googleapis.com/css2?family=Roboto:wght@400;500;700&display=swap" rel="stylesheet">
+	
+	<!-- Font Awesome -->
+	<link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/5.10.0/css/all.min.css" rel="stylesheet">
+	
+	<!-- Libraries Stylesheet -->
+	<link href="lib/animate/animate.min.css" rel="stylesheet">
+	<link href="lib/owlcarousel/assets/owl.carousel.min.css" rel="stylesheet">
+	
+	<!-- Customized Bootstrap Stylesheet -->
+	<link href="/css/style.css" rel="stylesheet">
+</head>
+
+<body>
+
+<div class="container">
+	<!--Topbar-->
+	<div th:insert="~{shop/templates/shop_template.html::topbar_user}"
+	     th:if="${session.idUser != null}"></div>
+	
+	<div th:insert="~{shop/templates/shop_template.html::topbar}"
+	     th:if="${session.idUser == null}"></div>
+	<!--Navbar-->
+	<div th:insert="~{shop/templates/shop_template.html::navbar}"></div>
+	
+	
+	<div class="container">
+		<div class="bg-light p-30 mb-5">
+			<div class="border-bottom pb-2">
+				<h3>Your purchase has been completed successfully.</h3>
+				<h3>Thank you for trusting us.</h3>
+				
+				<a th:href="@{/home/shop}"
+				   class="btn btn-block btn-primary font-weight-bold my-3 py-3">Back to home
+				</a>
+			</div>
+		</div>
+	</div>
+
+
+</div>
+<!--footer-->
+<div th:insert="~{shop/templates/shop_template.html::footer}"></div>
+
+
+<!-- Back to Top -->
+<a href="#" class="btn btn-primary back-to-top"><i class="fa fa-angle-double-up"></i></a>
+
+
+<!-- JavaScript Libraries -->
+<script src="https://code.jquery.com/jquery-3.4.1.min.js"></script>
+<script src="https://stackpath.bootstrapcdn.com/bootstrap/4.4.1/js/bootstrap.bundle.min.js"></script>
+<script src="lib/easing/easing.min.js"></script>
+<script src="lib/owlcarousel/owl.carousel.min.js"></script>
+
+<!-- Contact Javascript File -->
+<script src="mail/jqBootstrapValidation.min.js"></script>
+<script src="mail/contact.js"></script>
+
+<!-- Template Javascript -->
+<script src="js/main.js"></script>
+</body>
+
+</html>

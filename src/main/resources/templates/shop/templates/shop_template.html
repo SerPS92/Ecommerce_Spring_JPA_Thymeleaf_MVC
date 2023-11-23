@@ -73,6 +73,8 @@
 						        data-toggle="dropdown" th:text="${session.name}">
 						</button>
 						<div class="dropdown-menu dropdown-menu-right">
+							<a th:href="@{/home/profile}" class="dropdown-item" type="button">Profile</a>
+							<a href="" class="dropdown-item" type="button">My orders</a>
 							<a th:href="@{/home/logout}" class="dropdown-item" type="button">Logout</a>
 						</div>
 					</div>
@@ -146,7 +148,7 @@
 										class="fa fa-angle-down mt-1"></i></a>
 								<div class="dropdown-menu bg-primary rounded-0 border-0 m-0">
 									<a th:href="@{/home/getCart}" class="dropdown-item">Shopping Cart</a>
-									<a href="checkout.html" class="dropdown-item">Checkout</a>
+									<a th:href="@{/home/checkout}" class="dropdown-item">Checkout</a>
 								</div>
 							</div>
 							<a th:href="@{/home/contact}" class="nav-item nav-link">Contact</a>
