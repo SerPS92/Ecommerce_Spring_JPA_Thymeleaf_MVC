@@ -1,0 +1,139 @@
+<!DOCTYPE html>
+<html lang="en" xmlns:th="http://www.w3.org/1999/xhtml">
+
+<head>
+	<meta charset="utf-8">
+	<title>MultiShop - Online Shop Website Template</title>
+	<meta content="width=device-width, initial-scale=1.0" name="viewport">
+	<meta content="Free HTML Templates" name="keywords">
+	<meta content="Free HTML Templates" name="description">
+	
+	<!-- Favicon -->
+	<link href="img/favicon.ico" rel="icon">
+	
+	<!-- Google Web Fonts -->
+	<link rel="preconnect" href="https://fonts.gstatic.com">
+	<link href="https://fonts.googleapis.com/css2?family=Roboto:wght@400;500;700&display=swap" rel="stylesheet">
+	
+	<!-- Font Awesome -->
+	<link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/5.10.0/css/all.min.css" rel="stylesheet">
+	
+	<!-- Libraries Stylesheet -->
+	<link href="lib/animate/animate.min.css" rel="stylesheet">
+	<link href="lib/owlcarousel/assets/owl.carousel.min.css" rel="stylesheet">
+	
+	<!-- Customized Bootstrap Stylesheet -->
+	<link href="/css/style.css" rel="stylesheet">
+</head>
+
+<body>
+
+<div class="container">
+	<!--Topbar-->
+	<div th:insert="~{shop/templates/shop_template.html::topbar_user}"
+	     th:if="${session.idUser != null}"></div>
+	
+	<div th:insert="~{shop/templates/shop_template.html::topbar}"
+	     th:if="${session.idUser == null}"></div>
+	<!--Navbar-->
+	<div th:insert="~{shop/templates/shop_template.html::navbar}"></div>
+	
+	
+	<h2>My Orders</h2>
+	
+	
+	<div class="bg-light p-30 mb-5">
+		<div class="row">
+			
+			
+			<table class="table">
+				<thead>
+				<tr>
+					<th scope="col">Number</th>
+					<th scope="col">Date</th>
+					<th scope="col">State</th>
+					<th scope="col">Total</th>
+				
+				</tr>
+				</thead>
+				<tbody>
+				<tr th:each="order:${orders}">
+					<td th:text="${order.number}"></td>
+					<td th:text="${#dates.format(order.date, 'dd/MM/yyyy')}"></td>
+					<td th:text="${order.state}"></td>
+					<td th:text="${order.total}"></td>
+					<td>
+						<a type="button" class="btn btn-primary"
+						   th:href="@{/home/details/{id} (id = ${order.id})}">Show</a>
+					</td>
+				
+				</tr>
+				</tbody>
+				
+				<div th:if="${ordersNumber > 0}">
+					<nav aria-label="Page navigation">
+						<ul class="pagination">
+							<div th:if="${currentPage > 0}">
+								<li class="page-item">
+									<a class="page-link" th:href="@{/home/orders(page=${currentPage - 1})}"
+									   aria-label="Previous">
+										<span aria-hidden="true">&laquo;</span>
+									</a>
+								</li>
+							</div>
+							
+							<div th:if="${currentPage == 0}">
+								<li class="page-item">
+									<a class="page-link" href="" aria-label="Previous">
+										<span aria-hidden="true">&laquo;</span>
+									</a>
+								</li>
+							</div>
+							<th:block th:each="pageNumber : ${#numbers.sequence(0, totalPages - 1)}"
+							          th:if="${pageNumber >= currentPage - 2 and pageNumber <= currentPage + 2}">
+								<li th:class="${pageNumber == currentPage} ? 'page-item active' : 'page-item'">
+									<a class="page-link" th:href="@{/home/orders(page=${pageNumber})}"
+									   th:text="${pageNumber + 1}"></a>
+								</li>
+							</th:block>
+							<div th:if="${currentPage < totalPages -1}">
+								<li class="page-item">
+									<a class="page-link" th:href="@{/home/orders(page=${currentPage + 1})}"
+									   aria-label="Next">
+										<span aria-hidden="true">&raquo;</span>
+									</a>
+								</li>
+							</div>
+						
+						</ul>
+					</nav>
+				</div>
+			</table>
+		</div>
+	</div>
+
+
+</div>
+<!--footer-->
+<div th:insert="~{shop/templates/shop_template.html::footer}"></div>
+
+
+<!-- Back to Top -->
+<a href="#" class="btn btn-primary back-to-top"><i class="fa fa-angle-double-up"></i></a>
+
+
+<!-- JavaScript Libraries -->
+<script src="https://code.jquery.com/jquery-3.4.1.min.js"></script>
+<script src="https://stackpath.bootstrapcdn.com/bootstrap/4.4.1/js/bootstrap.bundle.min.js"></script>
+<script src="lib/easing/easing.min.js"></script>
+<script src="lib/owlcarousel/owl.carousel.min.js"></script>
+
+<!-- Contact Javascript File -->
+<script src="mail/jqBootstrapValidation.min.js"></script>
+<script src="mail/contact.js"></script>
+
+<!-- Template Javascript -->
+<script src="js/main.js"></script>
+</body>
+
+</html>

@@ -5,6 +5,8 @@ import com.example.ecommerce.model.User;
 import com.example.ecommerce.repository.IOrderRepo;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageRequest;
+import org.springframework.data.domain.Pageable;
+import org.springframework.data.domain.Sort;
 import org.springframework.stereotype.Service;
 
 import java.text.SimpleDateFormat;
@@ -22,10 +24,6 @@ public class OrderServiceImpl implements IOrderService {
         this.orderRepo = orderRepo;
     }
 
-    @Override
-    public List<Order> findAll() {
-        return orderRepo.findAll();
-    }
 
     @Override
     public Optional<Order> findById(Integer id) {
@@ -38,14 +36,17 @@ public class OrderServiceImpl implements IOrderService {
     }
 
     @Override
-    public List<Order> findByUser(User user) {
-        return orderRepo.findByUser(user);
+    public Page<Order> findByUser(User user, Pageable pageable) {
+        return orderRepo.findByUser(user, pageable);
     }
 
     @Override
-    public Page<Order> getOrders(int page, int size) {
-        PageRequest pageRequest = PageRequest.of(page, size);
-        return orderRepo.findAll(pageRequest);
+    public Page<Order> getOrders(Pageable pageable) {
+        Pageable sortedPageable = PageRequest.of(
+                pageable.getPageNumber(),
+                pageable.getPageSize(),
+                Sort.by("id").descending());
+        return orderRepo.findAll(sortedPageable);
     }
 
     @Override
@@ -53,7 +54,6 @@ public class OrderServiceImpl implements IOrderService {
         Date date = new Date();
         SimpleDateFormat dateFormat = new SimpleDateFormat("yyyyMMdd");
         String formattedDate = dateFormat.format(date);
-
         Random random = new Random();
         int randomNumber = random.nextInt(10000);
 

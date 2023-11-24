@@ -3,14 +3,12 @@ package com.example.ecommerce.controller;
 import com.example.ecommerce.model.*;
 import com.example.ecommerce.service.*;
 import jakarta.servlet.http.HttpSession;
+import org.aspectj.weaver.ast.Or;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageRequest;
 import org.springframework.data.domain.Pageable;
-import org.springframework.security.core.Authentication;
-import org.springframework.security.core.context.SecurityContextHolder;
-import org.springframework.security.core.userdetails.UserDetails;
 import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
@@ -125,10 +123,10 @@ public class ShopController {
             log.info("Type: {}", user.getType());
         }
 
-        if(session.getAttribute("type").equals("Admin")){
+        if (session.getAttribute("type").equals("Admin")) {
             return "redirect:/admin";
         } else {
-            return  "redirect:/home";
+            return "redirect:/home";
         }
     }
 
@@ -154,6 +152,9 @@ public class ShopController {
             User user = optionalUser.get();
             model.addAttribute("user", user);
         }
+
+        detailsNumber = details.size();
+        model.addAttribute("detailsNumber", detailsNumber);
         return "shop/profile.html";
     }
 
@@ -337,9 +338,6 @@ public class ShopController {
 
         for (Detail detail : details) {
             detail.setOrder(order);
-            int sells = detail.getProduct().getSells();
-            int quantity = detail.getQuantity();
-            detail.getProduct().setSells(sells + quantity);
             detailsService.save(detail);
         }
 
@@ -366,6 +364,40 @@ public class ShopController {
         model.addAttribute("order", order);
 
         return "shop/checkout";
+    }
+
+    @GetMapping("/orders")
+    public String orders(@RequestParam(name = "page", defaultValue = "0") int page,
+                         @RequestParam(name = "pageSize", defaultValue = "10") int pageSize,
+                         HttpSession session,
+                         Model model) {
+
+        Pageable pageable = PageRequest.of(page, pageSize);
+        int idUser = (int) session.getAttribute("idUser");
+        Optional<User> optionalUser = userService.findById(idUser);
+        User user = optionalUser.get();
+        Page<Order> orders = orderService.findByUser(user, pageable);
+
+        detailsNumber = details.size();
+        model.addAttribute("detailsNumber", detailsNumber);
+        model.addAttribute("orders", orders);
+        model.addAttribute("ordersNumber", orders.getTotalElements());
+        model.addAttribute("currentPage", page);
+        model.addAttribute("totalPages", orders.getTotalPages());
+
+        return "shop/orders";
+    }
+
+    @GetMapping("/details/{id}")
+    public String details(@PathVariable(name = "id") int id,
+                          Model model) {
+
+        Optional<Order> optionalOrder = orderService.findById(id);
+        Order order = optionalOrder.get();
+        List<Detail> details = order.getDetails();
+
+        model.addAttribute("details", details);
+        return "shop/details";
     }
 
 }

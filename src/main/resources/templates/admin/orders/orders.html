@@ -50,16 +50,31 @@
 							<th scope="col">State</th>
 							<th scope="col">Total</th>
 							<th scope="col">User</th>
-							
+						
 						</tr>
 						</thead>
 						<tbody>
 						<tr th:each="order:${orders}">
 							<td th:text="${order.number}"></td>
-							<td th:text="${order.date}"></td>
+							<td th:text="${#dates.format(order.date, 'dd/MM/yyyy')}"></td>
 							<td th:text="${order.state}"></td>
 							<td th:text="${order.total}"></td>
-
+							<td th:text="${order.user.username}"></td>
+							<td>
+								<div class="btn-group">
+									<button type="button" class="btn btn-primary"
+									        data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
+										Actions
+									</button>
+									<div class="dropdown-menu">
+										<a class="dropdown-item"
+										   th:href="@{/order/details/{id} (id = ${order.id})}">Show details</a>
+										<a class="dropdown-item"
+										   th:href="@{/order/send/{id} (id = ${order.id})}">Send</a>
+									</div>
+								</div>
+							</td>
+						
 						</tr>
 						</tbody>
 						
@@ -102,8 +117,6 @@
 							</nav>
 						</div>
 					</table>
-				
-				
 				</div>
 			
 			</div>

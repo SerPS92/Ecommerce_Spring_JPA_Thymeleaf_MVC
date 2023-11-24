@@ -113,6 +113,7 @@ public class ProductController {
 
         Product p = new Product();
         p = productService.findById(product.getId()).get();
+        int sells = p.getSells();
 
         //Image1
         if (file.isEmpty()) {
@@ -154,6 +155,7 @@ public class ProductController {
             product.setOffer("No");
         }
 
+        product.setSells(sells);
         productService.update(product);
         return "redirect:/product";
     }
