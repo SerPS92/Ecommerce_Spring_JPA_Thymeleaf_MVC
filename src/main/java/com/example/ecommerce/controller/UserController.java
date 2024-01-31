@@ -77,7 +77,13 @@ public class UserController {
     @PostMapping("/update")
     public String update(User user){
 
-        user.setPassword(passEncoder.encode(user.getPassword()));
+        Optional<User> user1 = userService.findById(user.getId());
+        if(!user.getPassword().equals(user1.get().getPassword())){
+            user.setPassword(passEncoder.encode(user.getPassword()));
+        } else{
+            user.setPassword(user1.get().getPassword());
+        }
+
         userService.update(user);
 
         return "redirect:/user";

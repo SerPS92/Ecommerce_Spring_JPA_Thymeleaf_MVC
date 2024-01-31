@@ -106,6 +106,19 @@ public class ShopController {
     //Login
     @GetMapping("/login")
     public String login() {
+
+        List<User> users = userService.findAll();
+        if(users.isEmpty()){
+            User user = new User();
+            user.setUsername("admin");
+            user.setPassword(passwordEncoder.encode("admin"));
+            user.setType("Admin");
+            userService.save(user);
+            log.info("First user create:");
+            log.info("Username: {}", "admin");
+            log.info("Password: {}", "admin");
+        }
+
         return "shop/login";
     }
 

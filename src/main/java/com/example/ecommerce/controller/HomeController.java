@@ -5,11 +5,13 @@ import com.example.ecommerce.service.IUserService;
 import jakarta.servlet.http.HttpSession;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.RequestMapping;
 
+import java.util.List;
 import java.util.Optional;
 
 @Controller
@@ -26,6 +28,7 @@ public class HomeController {
 
     @GetMapping("")
     public String home(Model model, HttpSession session){
+
         int id = (int) session.getAttribute("idUser");
         Optional<User> optionalUser = userService.findById(id);
         if(optionalUser.isPresent()){

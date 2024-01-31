@@ -3,6 +3,8 @@ package com.example.ecommerce.model;
 import jakarta.persistence.*;
 import lombok.*;
 
+import java.util.List;
+
 @Entity
 @Table(name = "products")
 @NoArgsConstructor
@@ -32,5 +34,8 @@ public class Product {
 
     @ManyToOne
     private Category category;
+
+    @OneToMany(mappedBy = "product", cascade = CascadeType.ALL)
+    private List<Detail> details;
 
 }

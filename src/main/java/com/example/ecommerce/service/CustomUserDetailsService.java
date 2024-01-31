@@ -40,6 +40,5 @@ public class CustomUserDetailsService implements UserDetailsService {
         } else {
             throw new UsernameNotFoundException("User not found");
         }
-
     }
 }
